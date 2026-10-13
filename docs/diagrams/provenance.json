@@ -1,0 +1,110 @@
+{
+  "tool": "@excalimate/mcp-server",
+  "version": "0.5.0",
+  "transport": "local stdio",
+  "privateDataSent": false,
+  "externalShareToolCalled": false,
+  "svgRenderer": "local deterministic snapshot of MCP-returned scene",
+  "calls": [
+    {
+      "name": "read_me",
+      "status": "success"
+    },
+    {
+      "name": "clear_scene",
+      "status": "success"
+    },
+    {
+      "name": "create_scene",
+      "status": "success"
+    },
+    {
+      "name": "set_camera_frame",
+      "status": "success"
+    },
+    {
+      "name": "auto_animate",
+      "status": "success"
+    },
+    {
+      "name": "set_clip_range",
+      "status": "success"
+    },
+    {
+      "name": "validate_project",
+      "status": "success"
+    },
+    {
+      "name": "get_scene",
+      "status": "success"
+    },
+    {
+      "name": "save_checkpoint",
+      "status": "success"
+    },
+    {
+      "name": "clear_scene",
+      "status": "success"
+    },
+    {
+      "name": "create_scene",
+      "status": "success"
+    },
+    {
+      "name": "set_camera_frame",
+      "status": "success"
+    },
+    {
+      "name": "auto_animate",
+      "status": "success"
+    },
+    {
+      "name": "set_clip_range",
+      "status": "success"
+    },
+    {
+      "name": "validate_project",
+      "status": "success"
+    },
+    {
+      "name": "get_scene",
+      "status": "success"
+    },
+    {
+      "name": "save_checkpoint",
+      "status": "success"
+    },
+    {
+      "name": "clear_scene",
+      "status": "success"
+    },
+    {
+      "name": "create_scene",
+      "status": "success"
+    },
+    {
+      "name": "set_camera_frame",
+      "status": "success"
+    },
+    {
+      "name": "auto_animate",
+      "status": "success"
+    },
+    {
+      "name": "set_clip_range",
+      "status": "success"
+    },
+    {
+      "name": "validate_project",
+      "status": "success"
+    },
+    {
+      "name": "get_scene",
+      "status": "success"
+    },
+    {
+      "name": "save_checkpoint",
+      "status": "success"
+    }
+  ]
+}

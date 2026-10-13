@@ -1,0 +1,102 @@
+#!/bin/sh
+# Buildroot/SysV service. Never deletes VPN identity or changes USB/FIDO state.
+DAEMON=/opt/tailscale/tailscale_1.104.1_riscv64/tailscaled
+CLI=/opt/tailscale/tailscale_1.104.1_riscv64/tailscale
+STATE=/var/lib/tailscale
+RUN=/run/tailscale
+PIDFILE=$RUN/tailscaled.pid
+SOCKET=$RUN/tailscaled.sock
+
+read_pid() {
+    [ -r "$PIDFILE" ] || return 1
+    IFS= read -r pid < "$PIDFILE" || return 1
+    case "$pid" in ''|*[!0-9]*) return 1 ;; esac
+    [ "$pid" -gt 1 ]
+}
+
+ours_running() {
+    read_pid && kill -0 "$pid" 2>/dev/null &&
+        [ "$(readlink "/proc/$pid/exe" 2>/dev/null)" = "$DAEMON" ]
+}
+
+start() {
+    if ours_running; then
+        echo "Tailscale already running."
+        return 0
+    fi
+    if read_pid && kill -0 "$pid" 2>/dev/null; then
+        echo "Refusing to overwrite another live process's PID file." >&2
+        return 1
+    fi
+    [ -x "$DAEMON" ] || { echo "Tailscale binary missing." >&2; return 1; }
+    umask 077
+    mkdir -p "$STATE" "$RUN" || return 1
+    chmod 700 "$STATE" "$RUN" || return 1
+    if [ -e "$STATE/tailscaled.state" ]; then
+        chmod 600 "$STATE/tailscaled.state" || return 1
+    fi
+    year=$(date -u +%Y)
+    if [ "$year" -lt 2024 ]; then
+        echo "Clock not yet synchronized: HTTPS will retry after NTP catches up."
+    fi
+    # GOMEMLIMIT is a soft Go heap limit, not a cap on total process RSS.
+    nohup env GOMEMLIMIT=24MiB GOGC=50 "$DAEMON" \
+        --state="$STATE/tailscaled.state" --statedir="$STATE" \
+        --socket="$SOCKET" --tun=tailscale0 --no-logs-no-support \
+        >"$RUN/tailscaled.log" 2>&1 </dev/null &
+    pid=$!
+    printf '%s\n' "$pid" > "$PIDFILE" || return 1
+    for i in 1 2 3 4 5 6 7 8 9 10; do
+        if ! kill -0 "$pid" 2>/dev/null; then
+            echo "Tailscale exited; inspect the root-only runtime log." >&2
+            rm -f "$PIDFILE"
+            return 1
+        fi
+        if [ -S "$SOCKET" ]; then
+            echo "Tailscale local service started; network readiness is separate."
+            return 0
+        fi
+        sleep 1
+    done
+    echo "Tailscale still initializing; inspect status." >&2
+    return 1
+}
+
+stop() {
+    if ! ours_running; then
+        if read_pid && kill -0 "$pid" 2>/dev/null; then
+            echo "Refusing to stop an unrelated process." >&2
+            return 1
+        fi
+        echo "Tailscale is not running."
+        rm -f "$PIDFILE"
+        return 0
+    fi
+    kill -TERM "$pid" || return 1
+    for i in 1 2 3 4 5 6 7 8 9 10; do
+        if ! kill -0 "$pid" 2>/dev/null; then
+            rm -f "$PIDFILE"
+            echo "Tailscale stopped; persistent identity retained."
+            return 0
+        fi
+        sleep 1
+    done
+    echo "Stop not confirmed; no force kill or identity removal attempted." >&2
+    return 1
+}
+
+status() {
+    ours_running || { echo "Tailscale is not running."; return 1; }
+    echo "Tailscale process is running."
+    # Deliberately omit login links, account/peer lists and state-file contents.
+    "$CLI" --socket="$SOCKET" status --json 2>/dev/null | grep '"BackendState"'
+    "$CLI" --socket="$SOCKET" ip -4 2>/dev/null
+}
+
+case "${1:-}" in
+    start) start ;;
+    stop) stop ;;
+    restart) stop && start ;;
+    status) status ;;
+    *) echo "Usage: $0 {start|stop|restart|status}" >&2; exit 1 ;;
+esac
