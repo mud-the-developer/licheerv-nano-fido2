@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920" role="img">
+<title>daily-usage</title>
+<metadata>Scene created and animated via @excalimate/mcp-server 0.5.0 over MCP; static SVG snapshot rendered locally from the returned scene.</metadata>
+<defs><marker id="tip" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#475569"/></marker></defs><rect width="1400" height="920" fill="#ffffff"/>
+<text x="700" y="52.5" text-anchor="middle" dominant-baseline="middle" fill="#0f172a" font-family="Arial, sans-serif" font-size="30"><tspan x="700" y="52.5">Operator workflow - first setup, daily unlock, browser use and lock</tspan></text>
+<rect x="35" y="130" width="350" height="120" rx="12" fill="#fff7ed" stroke="#9a3412" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="210" y="165.7" text-anchor="middle" dominant-baseline="middle" fill="#9a3412" font-family="Arial, sans-serif" font-size="18"><tspan x="210" y="165.7">Before first setup</tspan><tspan x="210" y="190">secure SSH / root access</tspan><tspan x="210" y="214.29999999999998">keep another login method</tspan></text>
+<rect x="525" y="130" width="350" height="120" rx="12" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+<text x="700" y="165.7" text-anchor="middle" dominant-baseline="middle" fill="#166534" font-family="Arial, sans-serif" font-size="18"><tspan x="700" y="165.7">[2] FIRST SETUP - once</tspan><tspan x="700" y="190">confirm vault passphrase</tspan><tspan x="700" y="214.29999999999998">confirm a separate FIDO PIN</tspan></text>
+<rect x="1010" y="130" width="330" height="120" rx="12" fill="#e0f2fe" stroke="#075985" stroke-width="2"/>
+<text x="1175" y="165.7" text-anchor="middle" dominant-baseline="middle" fill="#075985" font-family="Arial, sans-serif" font-size="18"><tspan x="1175" y="165.7">Vault CONFIGURED</tspan><tspan x="1175" y="190">encrypted state retained</tspan><tspan x="1175" y="214.29999999999998">not yet unlocked</tspan></text>
+<line x1="385" y1="190" x2="525" y2="190" stroke="#475569" stroke-width="2"/><polygon points="525,190 515,185 515,195" fill="#475569"/>
+<line x1="875" y1="190" x2="1010" y2="190" stroke="#475569" stroke-width="2"/><polygon points="1010,190 1000,185 1000,195" fill="#475569"/>
+<rect x="35" y="350" width="350" height="120" rx="12" fill="#e0f2fe" stroke="#075985" stroke-width="2"/>
+<text x="210" y="385.7" text-anchor="middle" dominant-baseline="middle" fill="#075985" font-family="Arial, sans-serif" font-size="18"><tspan x="210" y="385.7">After boot / power loss</tspan><tspan x="210" y="410">wait for networking and clock</tspan><tspan x="210" y="434.3">open the SSH console</tspan></text>
+<rect x="525" y="350" width="350" height="120" rx="12" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+<text x="700" y="385.7" text-anchor="middle" dominant-baseline="middle" fill="#166534" font-family="Arial, sans-serif" font-size="18"><tspan x="700" y="385.7">[3] UNLOCK / START</tspan><tspan x="700" y="410">enter VAULT passphrase</tspan><tspan x="700" y="434.3">not the FIDO PIN</tspan></text>
+<rect x="1010" y="350" width="330" height="120" rx="12" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+<text x="1175" y="385.7" text-anchor="middle" dominant-baseline="middle" fill="#166534" font-family="Arial, sans-serif" font-size="18"><tspan x="1175" y="385.7">UNLOCKED + HID linked</tspan><tspan x="1175" y="410">USER is the approval input</tspan><tspan x="1175" y="434.3">existing keys stay on device</tspan></text>
+<line x1="385" y1="410" x2="525" y2="410" stroke="#475569" stroke-width="2"/><polygon points="525,410 515,405 515,415" fill="#475569"/>
+<line x1="875" y1="410" x2="1010" y2="410" stroke="#475569" stroke-width="2"/><polygon points="1010,410 1000,405 1000,415" fill="#475569"/>
+<rect x="35" y="575" width="620" height="130" rx="12" fill="#e0f2fe" stroke="#075985" stroke-width="2"/>
+<text x="345" y="603.55" text-anchor="middle" dominant-baseline="middle" fill="#075985" font-family="Arial, sans-serif" font-size="18"><tspan x="345" y="603.55">Browser registration / sign-in</tspan><tspan x="345" y="627.8499999999999">select the USB security key</tspan><tspan x="345" y="652.15">enter FIDO PIN when asked; press USER when asked</tspan><tspan x="345" y="676.4499999999999">Token2 demo working: operator-reported</tspan></text>
+<rect x="730" y="575" width="280" height="130" rx="12" fill="#fff7ed" stroke="#9a3412" stroke-width="2" stroke-dasharray="9 6"/>
+<text x="870" y="615.7" text-anchor="middle" dominant-baseline="middle" fill="#9a3412" font-family="Arial, sans-serif" font-size="18"><tspan x="870" y="615.7">[0] EXIT MENU</tspan><tspan x="870" y="640">menu closes only</tspan><tspan x="870" y="664.3000000000001">authenticator stays unlocked</tspan></text>
+<rect x="1060" y="575" width="280" height="130" rx="12" fill="#dcfce7" stroke="#166534" stroke-width="2"/>
+<text x="1200" y="615.7" text-anchor="middle" dominant-baseline="middle" fill="#166534" font-family="Arial, sans-serif" font-size="18"><tspan x="1200" y="615.7">[4] LOCK / STOP</tspan><tspan x="1200" y="640">stop managed process</tspan><tspan x="1200" y="664.3000000000001">retain encrypted vault</tspan></text>
+<rect x="35" y="750" width="1305" height="70" rx="12" fill="#fee2e2" stroke="#991b1b" stroke-width="2"/>
+<text x="687.5" y="785" text-anchor="middle" dominant-baseline="middle" fill="#991b1b" font-family="Arial, sans-serif" font-size="18"><tspan x="687.5" y="785">Never fix setup errors by deleting the vault. Never put passwords, PINs or device state in Git.</tspan></text>
+<text x="700" y="877.5" text-anchor="middle" dominant-baseline="middle" fill="#0f172a" font-family="Arial, sans-serif" font-size="17"><tspan x="700" y="877.5">Manual unlock after power loss remains part of the design. No Reset, hidden auto-unlock or certification claim.</tspan></text>
+</svg>

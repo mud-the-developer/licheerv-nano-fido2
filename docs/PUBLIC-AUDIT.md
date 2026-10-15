@@ -33,7 +33,13 @@ The repository retains the old Go module path for source import compatibility; t
 
 ## Diagram review
 
-Three diagrams were produced through actual **Excalimate MCP 0.5.0**, local stdio, using read_me/create_scene/managed-animation/validation/checkpoint tools. The server process used a task-local home/temp environment rather than credential-bearing configuration. No external share tool or hosted model was called. SVG snapshots contain no scripts, foreignObject, event handlers, remote images or private data. Editable V2 checkpoints and tool provenance are included.
+Four diagrams were produced through actual **Excalimate MCP 0.5.0**, local stdio, using read_me/create_scene/managed-animation/validation/checkpoint tools. The server process used a task-local home/temp environment rather than credential-bearing configuration. No external share tool or hosted model was called. SVG snapshots contain no scripts, foreignObject, event handlers, remote images or private data. Editable V2 checkpoints and tool provenance are included.
+
+## Operator-guide update review
+
+The detailed operator handbook, troubleshooting matrix and documentation index were added with generic host/path placeholders only. The Token2 URL is a public demo reference; its reported success is attributed to the operator rather than presented as an independently captured browser matrix. The new daily-use diagram contains only generic credential roles and menu choices. No owner device was accessed, stopped or reconfigured to publish these documents.
+
+This update also publishes the previously local USER approval, checked initializer, English TUI and isolated mock-UI test source. It does not publish private test output, a live vault, secret input, operational network data, compiler binaries or the task-local MCP/npm/scanner environment.
 
 ## Repeat locally
 

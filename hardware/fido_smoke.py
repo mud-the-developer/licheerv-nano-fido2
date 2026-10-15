@@ -86,6 +86,19 @@ class Nano:
         self.approvals = 0
         self.denials = 0
         self.error = None
+        self.physical_button = args.physical_button
+        self.notice_closed = threading.Event()
+        self.notice_closed.set()
+        self.approval_condition = threading.Condition()
+
+    def wait_approval(self, expected: int):
+        if not self.physical_button:
+            return
+        if not self.notice_closed.wait(35):
+            raise RuntimeError("USER instruction window was not dismissed")
+        with self.approval_condition:
+            if not self.approval_condition.wait_for(lambda: self.approvals >= expected, timeout=5):
+                raise RuntimeError("board did not confirm physical USER approval")
 
     def control(self, mode: str) -> str:
         if mode not in {"activate", "stop", "restore", "cleanup"}:
@@ -101,7 +114,8 @@ class Nano:
     def start(self):
         self.ready.clear()
         self.error = None
-        self.proc = subprocess.Popen(self.base + ["-tt", self.target, f"sh {CONTROL} run"],
+        mode = "run-user" if self.physical_button else "run"
+        self.proc = subprocess.Popen(self.base + ["-tt", self.target, f"sh {CONTROL} {mode}"],
                                      env=self.env, stdin=subprocess.PIPE,
                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                      bufsize=0)
@@ -133,22 +147,48 @@ class Nano:
             found = re.search(r'Request (\d+): RP="([^"\r\n]*)" user="([^"\r\n]*)"', text)
             if found:
                 request = f"action={found.group(1)}, RP={found.group(2)}"
+            if self.physical_button and "Press on-board USER now;" in text:
+                if found is None or found.group(2) != RP_ID:
+                    self.error = "unexpected RP in physical approval request"
+                    text = ""
+                    continue
+                self.notice_closed.clear()
+                try:
+                    ctypes.windll.user32.MessageBoxW(
+                        None, "Press and release the Nano USER button now. Do not press RESET.\n\n"
+                        + request + "\n\nAfter pressing USER, click OK. Clicking OK itself does not approve anything.",
+                        "Physical USER button test", 0x40 | 0x10000 | 0x40000)
+                finally:
+                    self.notice_closed.set()
+                # Keep the request context; no token is sent in physical mode.
+                text = ""
+                continue
+            if self.physical_button and "Physical USER approval accepted." in text:
+                with self.approval_condition:
+                    self.approvals += 1
+                    self.approval_condition.notify_all()
+                text = ""
+                continue
             match = re.search(r"TEST ONLY: type ([0-9a-f]{8}) within 30 seconds:", text)
             if not match:
+                continue
+            if self.physical_button:
+                self.error = "unexpected terminal-token prompt in physical mode"
+                text = ""
                 continue
             nonce = match.group(1)
             allowed_rp = found is not None and found.group(2) == RP_ID
             accepted = False
             if allowed_rp:
                 message = (
-                    "Nano FIDO2 실물 시험 요청입니다.\n\n" + request +
-                    "\n\n등록/인증 요청이 맞으면 예를 눌러 주세요.\n"
-                    "30초 안에 승인해야 합니다.\n"
-                    "이것은 시험용 터미널 승인이고 물리 버튼 검증은 아닙니다."
+                    "Nano FIDO2 disposable physical-test request.\n\n" + request +
+                    "\n\nClick Yes only if this registration/authentication request is expected.\n"
+                    "Approve within 30 seconds.\n"
+                    "This is test-only terminal approval, not a physical-button test."
                 )
                 # No is the default; there is no automated approval path.
                 accepted = ctypes.windll.user32.MessageBoxW(
-                    None, message, "Nano FIDO2 시험 승인", 0x4 | 0x20 | 0x100 | 0x10000 | 0x40000
+                    None, message, "Nano FIDO2 test approval", 0x4 | 0x20 | 0x100 | 0x10000 | 0x40000
                 ) == 6
             if accepted:
                 if process.stdin is None:
@@ -241,8 +281,9 @@ def main() -> int:
     parser.add_argument("--target", required=True, help="Your Nano's verified SSH hostname or address")
     parser.add_argument("--host-key-alias", help="Existing trusted known_hosts entry for this same board")
     parser.add_argument("--result", required=True)
+    parser.add_argument("--physical-button", action="store_true", help="Require the real on-board USER event, not a terminal token")
     args = parser.parse_args()
-    result: dict[str, Any] = {"mode": "physical USB HID with disposable SD vault and explicit human terminal approvals",
+    result: dict[str, Any] = {"mode": "physical USB HID with disposable SD vault and " + ("on-board USER approvals" if args.physical_button else "explicit human terminal approvals"),
               "physical_button_tested": False, "reset_called": False, "live_account_used": False,
               "checks": [], "status": "running"}
     destination = Path(args.result)
@@ -286,11 +327,13 @@ def main() -> int:
         server = Fido2Server(PublicKeyCredentialRpEntity(id=RP_ID, name="Nano disposable test"),
                              attestation=AttestationConveyancePreference.DIRECT,
                              verify_attestation=verify_attestation)
-        progress("Approve the disposable registration request in the Windows approval dialog.")
+        progress("Press USER when the physical instruction window appears." if args.physical_button else "Approve the disposable registration request in the Windows approval dialog.")
         credential = register(server, ctap, client_pin, pin)
+        nano.wait_approval(1)
         result["checks"].append("physical MakeCredential; independent RP/UP/UV/packed-attestation validation")
-        progress("Approve the disposable authentication request in the Windows approval dialog.")
+        progress("Press USER again for authentication when instructed." if args.physical_button else "Approve the disposable authentication request in the Windows approval dialog.")
         first_counter = authenticate(server, ctap, client_pin, pin, credential)
+        nano.wait_approval(2)
         result["checks"].append("physical GetAssertion; independent RP/UP/UV/signature validation")
         wrong = "0" + pin if len(pin) < 63 else "incorrect-test-pin"
         try:
@@ -312,12 +355,14 @@ def main() -> int:
         if not ctap.info.options.get("clientPin") or client_pin.get_pin_retries()[0] != 7:
             raise RuntimeError("PIN or retry count lost across authenticator process restart")
         result["checks"].append("same SD vault reload; PIN and seven retries persist across process restart")
-        progress("Approve authentication after restart in the Windows approval dialog.")
+        progress("Press USER for authentication after restart when instructed." if args.physical_button else "Approve authentication after restart in the Windows approval dialog.")
         second_counter = authenticate(server, ctap, client_pin, pin, credential)
+        nano.wait_approval(3)
         if second_counter <= first_counter or client_pin.get_pin_retries()[0] != 8:
             raise RuntimeError("counter persistence or successful-PIN retry reset failed")
         result["signature_counters"] = [first_counter, second_counter]
         result["checks"].append("old credential authenticates after restart; monotonic counter and retry reset verified")
+        result["physical_button_tested"] = args.physical_button and nano.approvals >= 3
         result["status"] = "passed"
         progress("Physical protocol checks passed. Restoring USB and disposing of the test-only vault.")
     except BaseException as exc:

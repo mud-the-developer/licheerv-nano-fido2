@@ -1,6 +1,36 @@
 # Test evidence — scope matters
 
-Snapshot: 2026-10-13. No live account or live authenticator vault was used.
+Snapshots: 2026-10-13 terminal approval; 2026-10-15 physical USER approval and operator browser report. Controlled physical/workflow experiments used synthetic state, not owner credentials.
+
+## Operator-reported Token2 browser test
+
+On 2026-10-15 the operator reported that https://www.token2.com/tools/fido2-demo worked with the device. This is real user feedback, not an agent-observed or independently captured automated browser run. The precise browser/version, selected options, individual registration/login/discoverable ceremonies and artifacts were not specified, so they are not inferred here. No PIN, passphrase, credential dump or raw browser log was collected.
+
+The demo presents registration followed by login through WebAuthn. Its successful use is recorded separately from the independent physical USB/RP-verifier checks below. Broad cross-browser/enterprise-policy compatibility and certification remain unclaimed.
+
+## English ANSI console redesign on 2026-10-15
+
+The menu, all help/errors/setup feedback and configuration documentation were converted to English. A colored status dashboard, grouped controls, four wizard stages, paused detail views and a short opening animation were added. Plain/no-color and no-animation fallbacks remain available, and secret input never animates or echoes.
+
+Four isolated SSH-PTY style checks passed using mock app/service/vault/lock paths: English plain output without ANSI; ANSI dashboard/animation/cursor restoration; cancellation/short/mismatched/confirmed secret entry without echo; fixture lock cleanup. The owner vault and running service were never invoked by these mock tests. Read-only checks of the installed menu preserved the same live authenticator PID and ready marker, with UNLOCKED/HID state unchanged. Only the menu file was atomically replaced, with its prior version backed up.
+
+A local negative launcher check also verified that failed/unconfirmed fixture creation skips cleanup instead of deleting an existing/unknown fixture. Cleanup failures are marked needs_review. This check did not connect to a board. These UI checks do not add browser, cryptographic, hardware-button or power-loss coverage.
+
+## Interactive configuration test on 2026-10-15
+
+The software suite passed 72 host cases including subtests, host/target vet and a RISC-V build. The owner bundle was installed without choosing or creating owner credentials. An isolated SSH-PTY fixture remapped only its vault/service paths to disposable test locations; the actual owner path was required to remain absent.
+
+Six integration checks passed: hidden/confirmed inputs with no secret echo, independent decryption proving the initial PIN hash and empty credential set, TUI and CLI refusal to overwrite existing ciphertext, wrong-passphrase fail-closed/USB restoration with unchanged ciphertext, normal supervised unlock/start/stop with vault retention, and cleanup of runtime/lock markers while the owner vault remained absent. The synthetic test vault was removed afterward. This is not the user's own vault initialization.
+
+The test found and corrected an input-node lookup path and ensured proper daemon detachment from interactive sessions. A readiness marker makes startup success explicit; no raw account/request logs are retained. Real browser compatibility and power-cycle behavior remain separate tests.
+
+## Physical USER test on 2026-10-15
+
+The evdev approval mode passed the complete physical USB flow with **three on-board USER presses**: registration, authentication and authentication after process restart. No terminal approval nonce was sent and the Windows information dialog only indicated when to press; clicking it was not an approval. Strict canonical CBOR/GetInfo, PIN protocol 1, independent RP/UP/UV/packed-attestation/signature checks, wrong PIN/retry decrement, SD reload and counters 1 to 2 passed. The runner status was passed, including automatic cleanup.
+
+The device reader validates the gpio-keys name, USER capability/code 431 and initial key state, and rejects stale/held/repeat/drop/error conditions. Host state-transition tests passed, and all 24 target helper cases including subtests passed; normal physical presses were then tested. Actual held/repeat/timeout/unplug negative tests are still pending. The current publication-source software suite passed 61 cases including subtests, host/target vet and RISC-V cross-build.
+
+Afterward both USB and management SSH were verified; the original network-only USB configuration was configured, the temporary HID and application were stopped, and the disposable SD vault/RAM secret were absent. No live vault was provisioned.
 
 ## Before publication
 
@@ -41,4 +71,4 @@ The test authenticator was stopped, its temporary HID link removed, original net
 
 ## Not yet verified
 
-Real USER press/release approvals, real browser WebAuthn, hardware-enforced power-cycle limits, CANCEL, concurrent channels, cold boot, power loss, exhaustive reconnect/recovery, secure key storage and production security remain outstanding. USER hardware/input metadata was inspected read-only, but the operator could not press it during that investigation.
+A broader independently documented browser/version/option matrix, further physical button negative tests, hardware-enforced power-cycle limits, CANCEL, concurrent channels, cold boot, power loss, exhaustive reconnect/recovery, secure key storage and production security remain outstanding. The operator-reported Token2 success above is not erased by this remaining-work list. USER was only inspected read-only in the original investigation; its normal physical approvals were verified separately on 2026-10-15.

@@ -8,12 +8,12 @@ An attacker with Linux root, a compromised boot image, privileged memory access,
 
 ## Current gaps
 
-- USER evdev approval is not implemented or physically pressed in a verified credential operation. Terminal approval is test-only.
+- USER evdev approval was implemented and physically verified for registration, authentication and authentication after process restart on 2026-10-15. Further physical held/repeat/timeout/removal tests remain. Terminal approval is still test-only. The evdev reader supports verified gpio-keys/USER capability on 64-bit little-endian Linux only and fails closed elsewhere.
 - Synchronous approval can block CANCEL. Concurrent channel isolation, partial-message timeouts and in-flight resynchronization require work.
 - Three consecutive incorrect PINs block the current process/session; process restart clears that session block. The persisted total of eight retries is separate and survives restart, including zero.
 - Reset is rejected, not implemented. Do not advertise commercial reset/recovery behavior.
 - U2F inherits upstream behavior and has not received a separate comprehensive hardware review.
-- Browser WebAuthn API, cold boot, interrupted SD writes, reconnect cycles and backup/recovery are not comprehensively tested.
+- The operator reported the Token2 browser demo working. Its exact browser/version, options and individual ceremonies were not independently captured; broader WebAuthn compatibility, cold boot, interrupted SD writes, reconnect cycles and backup/recovery are not comprehensively tested.
 - No independent penetration test, dependency vulnerability review, race-detector run or FIDO certification has been completed.
 
 ## Memory fix

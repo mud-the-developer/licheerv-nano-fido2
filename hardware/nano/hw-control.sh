@@ -80,7 +80,7 @@ activate)
     [ "$(cat /sys/class/hidg/hidg0/dev)" = "$(cat "$FUNC/dev")" ]
     echo 'Temporary FIDO HID active; mapped /dev/hidg0. Automatic rollback in 15 minutes.'
     ;;
-run)
+run|run-user)
     [ -t 0 ] || { echo 'Interactive SSH PTY required' >&2; exit 1; }
     [ -e "$RUN/active" ] && [ -c /dev/hidg0 ]
     [ "$(cat /sys/class/hidg/hidg0/dev)" = "$(cat "$FUNC/dev")" ]
@@ -93,6 +93,11 @@ run)
     cp "$RUN/lab-passphrase" "$RUN/pass.once"
     chmod 600 "$RUN/pass.once"
     printf '%s\n' "$$" > "$RUN/app.pid"
+    if [ "$1" = run-user ]; then
+        [ -c /dev/input/event0 ] || { echo 'Verified USER input node missing' >&2; exit 1; }
+        exec env GOMEMLIMIT=40MiB GOGC=50 "$APP" --hid /dev/hidg0 \
+            --vault "$STATE/vault.enc" --pass-file "$RUN/pass.once" --button-event /dev/input/event0
+    fi
     exec env GOMEMLIMIT=40MiB GOGC=50 "$APP" --hid /dev/hidg0 \
         --vault "$STATE/vault.enc" --pass-file "$RUN/pass.once" --terminal-approval
     ;;
@@ -111,5 +116,5 @@ cleanup)
     rm -f "$RUN/lab-passphrase" "$RUN/pass.once" "$STATE/vault.enc"
     echo 'Disposable lab vault and RAM-only lab secret removed.'
     ;;
-*) echo 'Usage: hw-control.sh activate|run|stop|restore|cleanup' >&2; exit 1 ;;
+*) echo 'Usage: hw-control.sh activate|run|run-user|stop|restore|cleanup' >&2; exit 1 ;;
 esac
