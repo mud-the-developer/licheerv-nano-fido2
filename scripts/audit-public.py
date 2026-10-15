@@ -23,6 +23,23 @@ RULES = {
 }
 FORBIDDEN_SUFFIXES = {".enc", ".state", ".pfx", ".p12", ".pem", ".key", ".exe", ".dll", ".a", ".pyc", ".test", ".tgz", ".zip", ".log"}
 IPV4 = re.compile(r"(?<![\w.])(?:\d{1,3}\.){3}\d{1,3}(?![\w.])")
+# Exact reviewed raster only; a new/replaced image requires fresh visual review.
+SCREENSHOT_SHA256 = "fbe238e193c6294967c1924f571a07f1f4c6b99e98a89dc6a748f6e8d667b82f"
+REVIEWED_PNGS = {
+    "docs/images/token2-demo-success.png": SCREENSHOT_SHA256,
+}
+
+
+def reviewed_image_issues(name: str, raw: bytes):
+    expected = REVIEWED_PNGS.get(name)
+    if expected is None:
+        return None
+    issues = []
+    if hashlib.sha256(raw).hexdigest() != expected:
+        issues.append("reviewed-image-digest-changed")
+    if not raw.startswith(b"\x89PNG\r\n\x1a\n"):
+        issues.append("reviewed-image-invalid-format")
+    return issues
 
 
 def main() -> int:
@@ -52,6 +69,11 @@ def main() -> int:
         if path == manifest:
             continue  # The output cannot contain its own stable digest.
         raw = path.read_bytes()  # Inspect every byte of each public candidate.
+        image_issues = reviewed_image_issues(name, raw)
+        if image_issues is not None:
+            rows.append((name, len(raw), hashlib.sha256(raw).hexdigest(), "pass" if not image_issues else "review:" + ";".join(image_issues)))
+            failures.extend((name, issue) for issue in image_issues)
+            continue
         issues = []
         if path.suffix.lower() in FORBIDDEN_SUFFIXES:
             issues.append("forbidden-file-type")

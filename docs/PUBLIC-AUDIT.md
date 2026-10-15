@@ -5,7 +5,7 @@ This repository was exported into a **new, separate Git history** from a larger 
 ## File-by-file process
 
 1. Use an explicit source allowlist: Nano-relevant Go packages, synthetic tests, dependency manifests, hardware test/controller source, a generic service, authored documentation, authored MCP diagrams and the upstream MIT license.
-2. Read every public candidate file in full as bytes, reject binary/non-UTF8/private file types, scan private-key blocks, credential/token formats, authentication URLs, personal Windows paths, SSH-key paths, real IPv4 addresses and active/external SVG content. `scripts/audit-public.py` performs this offline pass without printing matched values.
+2. Read every public candidate file in full as bytes, reject unreviewed binary/non-UTF8/private file types (the single reviewed screenshot exception is pinned below), scan private-key blocks, credential/token formats, authentication URLs, personal Windows paths, SSH-key paths, real IPv4 addresses and active/external SVG content. `scripts/audit-public.py` performs this offline pass without printing matched values.
 3. Review the meaningful findings/contexts: key/PIN/vault field names in source are code/schema; synthetic unit-test PINs/passphrases are labeled test-only and are not operator credentials; go.sum values are public dependency checksums; hardware VID/PID, USER circuitry and input codes are public board facts.
 4. Perform an independent **Gitleaks 8.30.1** scan with redaction and built-in rules. The scanner's official release checksum was checked before execution. No hosted scanner or external source upload is used.
 5. Inspect Git's exact non-ignored candidate/staged paths, run tests/vet/cross-build, validate SVGs and look at raster previews, then repeat the scan over the new commit history before any public push.
@@ -40,6 +40,12 @@ Four diagrams were produced through actual **Excalimate MCP 0.5.0**, local stdio
 The detailed operator handbook, troubleshooting matrix and documentation index were added with generic host/path placeholders only. The Token2 URL is a public demo reference; its reported success is attributed to the operator rather than presented as an independently captured browser matrix. The new daily-use diagram contains only generic credential roles and menu choices. No owner device was accessed, stopped or reconfigured to publish these documents.
 
 This update also publishes the previously local USER approval, checked initializer, English TUI and isolated mock-UI test source. It does not publish private test output, a live vault, secret input, operational network data, compiler binaries or the task-local MCP/npm/scanner environment.
+
+## Operator screenshot review
+
+The operator-provided Token2 image was not included in the earlier documentation push. Before adding it, the agent visually checked that only the demo page and registration/login success messages were shown: no PIN, password, credential ID/log, user account, browser profile or operational address was visible. The original local file remains outside the public tree.
+
+The public PNG retains only IHDR/IDAT/IEND chunks; ancillary metadata was removed without changing image data. Only `docs/images/token2-demo-success.png` with the exact reviewed SHA256 is allowed by the whole-file checker. An altered image fails that digest check; an unreviewed image still gets the default binary rejection. This narrow exception does not treat text secret scans as image/OCR inspection. See [image provenance](images/README.md).
 
 ## Repeat locally
 

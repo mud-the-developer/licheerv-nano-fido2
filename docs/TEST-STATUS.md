@@ -4,7 +4,11 @@ Snapshots: 2026-10-13 terminal approval; 2026-10-15 physical USER approval and o
 
 ## Operator-reported Token2 browser test
 
-On 2026-10-15 the operator reported that https://www.token2.com/tools/fido2-demo worked with the device. This is real user feedback, not an agent-observed or independently captured automated browser run. The precise browser/version, selected options, individual registration/login/discoverable ceremonies and artifacts were not specified, so they are not inferred here. No PIN, passphrase, credential dump or raw browser log was collected.
+On 2026-10-15 the operator reported that https://www.token2.com/tools/fido2-demo worked with the device, then provided the screenshot below. The agent visually reviewed it: **both registration-completed and login-completed success messages are visible**. It is operator-provided browser evidence, not an independently replayed automated run. Browser/version, selected options, timing and authenticator identity are not visible, so they are not inferred. No PIN, passphrase, credential dump or raw browser log was collected.
+
+![Operator-provided Token2 registration and login success](images/token2-demo-success.png)
+
+The public copy retains the pixels but strips ancillary PNG metadata. [Image review and pinned digest](images/README.md) document its scope and privacy review.
 
 The demo presents registration followed by login through WebAuthn. Its successful use is recorded separately from the independent physical USB/RP-verifier checks below. Broad cross-browser/enterprise-policy compatibility and certification remain unclaimed.
 

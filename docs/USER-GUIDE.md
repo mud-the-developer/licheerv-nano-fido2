@@ -28,7 +28,7 @@ This is the detailed day-to-day handbook. [CONFIGURATION.md](CONFIGURATION.md) i
 
 The Nano itself implements USB FIDO2. It stores encrypted authenticator state on its SD card and signs requests on the device. On-board USER approval, PIN protocol 1, credential registration/authentication, process-restart persistence and monotonic signature-counter behavior passed physical USB tests. A lightweight English terminal console handles initial provisioning, unlock/start, stop/lock and diagnostics.
 
-The operator also reported that the [Token2 FIDO2 demo](https://www.token2.com/tools/fido2-demo) worked. This is useful real-browser evidence, but it is an operator report: the exact browser/version, options, individual ceremonies and artifacts were not independently captured by the agent. Broader browser compatibility and production security are not implied.
+The operator also reported that the [Token2 FIDO2 demo](https://www.token2.com/tools/fido2-demo) worked. The operator also supplied a [reviewed screenshot](TEST-STATUS.md#operator-reported-token2-browser-test) showing both registration and login success messages. This is useful browser evidence, but it is not an independently replayed run: exact browser/version, options and authenticator identity are not visible. Broader browser compatibility and production security are not implied.
 
 **Not plug-and-use after power loss:** the current design requires a management terminal to enter the vault passphrase again. The browser's FIDO PIN does not automatically decrypt the vault. Do not remove that requirement by putting the passphrase on SD.
 
@@ -231,7 +231,7 @@ Suggested reproducible sequence:
 
 Do not assume every advanced option works. Exclusion tests intentionally return an error for an already-registered key. Usernameless/discoverable modes exercise different paths. Metadata/certification results are not proof this custom device is certified. Do not copy another vendor's identity to bypass a relying party's trust policy.
 
-The current Token2 result is **operator-reported working**. The exact browser/version and individual operations were not independently captured. The automated physical evidence remains separately described in TEST-STATUS.md.
+The Token2 result is **operator-reported working, with an operator-provided screenshot showing both registration and login success**. The image was visually reviewed and stripped of ancillary metadata. Browser/version, exact options and authenticator identity are not visible; the agent did not replay that browser session. The independent physical evidence remains separately described in TEST-STATUS.md.
 
 ### Existing real services
 
@@ -391,7 +391,7 @@ Keep the evidence categories distinct:
 - Automated host/target software tests: specific code paths and filesystem helpers.
 - Physical USB/RP-verifier tests: actual Nano transport and independently verified operations, with three real USER approvals in the later run.
 - Mock UI tests: presentation/hidden input/English/ANSI behavior, not live cryptography or owner state.
-- Token2 demo: operator-reported browser success, not an independently captured multi-browser matrix.
+- Token2 demo: operator-reported browser success plus a reviewed registration/login-success screenshot, not an independently replayed multi-browser matrix.
 - Outstanding: production security, broader browser/options, cancellation/concurrent channels, physical negative-button cases, cold boot and power loss.
 
 For support, share only:

@@ -21,9 +21,11 @@ Snapshots: initial physical tests on 2026-10-13; actual USER approval and config
 | On-board USER approval | Three real presses passed: registration, authentication, authentication after restart |
 | Interactive console | Installed; isolated setup/unlock/lock workflow tested |
 | English ANSI redesign | Mock-only ANSI/plain, animation/cursor and secret-entry checks passed |
-| Token2 browser demo | Operator reported it working; exact browser/options/ceremonies not independently captured |
+| Token2 browser demo | Operator report plus reviewed screenshot showing registration and login success; not an independently replayed browser matrix |
 | Further physical held/repeat/timeout/removal tests | Pending |
 | CANCEL, concurrent channels, cold boot, power loss and security review | Pending |
+
+[View the operator-provided Token2 success screenshot](docs/TEST-STATUS.md#operator-reported-token2-browser-test). Its visible success messages are documented without inferring a browser version or device identity.
 
 The first physical experiment used three explicit human **terminal** approvals; it is not counted as a button test. The later run used actual USER events, never a matching terminal token or a Windows confirmation click as a substitute.
 
